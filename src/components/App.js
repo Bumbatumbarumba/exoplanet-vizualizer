@@ -1,9 +1,11 @@
 import React from 'react';
+import { BuildApiQuery, GetListOfSystems } from '../helpers/nasaApiHelper'
+import { MainRouter } from './MainRouter' 
 import '../css/App.css';
 
 const App = () => {
   return (
-    <h1>Exoplanet Visualizer</h1>
+    <MainRouter></MainRouter>
   );
 }
 

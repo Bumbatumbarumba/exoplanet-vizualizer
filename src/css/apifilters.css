@@ -1,0 +1,15 @@
+.filtersList {
+    display: flex;
+    flex-direction: row;
+    width: 75%;
+}
+
+.filterbutton {
+    font-size: 1em;
+    margin: 2%;
+    width: 10em;
+}
+
+.false {
+    background-color: grey;
+}
