@@ -20,7 +20,6 @@ export const SystemForm = (props) => {
         <form onSubmit={props.handleVisitSystem}>
             <label><input type="checkbox" onClick={props.handleToggleStarSearchText}></input>View random system</label>
             <input type="text" disabled={props.enableText} onChange={props.handleOnChange} onFocus={handleOnFocus} onBlur={handleOnBlur} defaultValue={defaultText}></input>
-            <ApiFilters></ApiFilters>
             <input type="submit" value="View System"></input>
         </form>
     )
