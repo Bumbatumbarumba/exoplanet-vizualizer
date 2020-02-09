@@ -1,42 +1,103 @@
 import React, { useState, useEffect } from 'react';
 import { SystemForm } from './SystemForm'
 import { GetListOfSystems, GetTargetSystemData } from '../helpers/nasaApiHelper'
-import axios from 'axios'
-
-
-const handleVisitSystem = (e) => {
-    e.preventDefault()
-}
 
 
 export const MainRouter = () => {
     // Hook definitions
-    const [targetSystem, setTargetSystem] = useState("")
-    const [toggleStarSearchText, setTextVisible] = useState(false)
-    const [temp, setTemp] = useState([])
+    const [targetSystem, setTargetSystem] = useState("") // Updates as user types.
+    const [enterSystem, setEnterSystem] = useState("") // Set when user clicks "view system".
+    const [toggleStarSearchText, setTextVisible] = useState(false) // Togggles the search bar.
+    const [systemData, setSystemData] = useState([]) // Populates with data on an existing system.
+    const [systemList, setSystemList] = useState([]) // List of stars with planets around them.
+    const [systemExists, setSystemExists] = useState(false) // Self-explanatory lol.
+    const [disableViewSystem, setDisableViewSystem] = useState(false)
 
+    //
+    // Toggles the "view system" button depending on the state of systemList.
+    //
+    useEffect(() =>{
+        setDisableViewSystem(systemList === [])
+
+        // NOTE TO SELF: FIGURE OUT WHY THIS ISN'T WORKING (gosh darn react)
+        
+    }, [systemList])
+
+
+    //
+    // Gets a list of systems. 
+    //
     useEffect(() => {
         const getData = async () => {
-            const result = await axios(
-                "https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets&select=pl_hostname,pl_pnum,pl_name,pl_letter,pl_orbper,pl_orbsmax,pl_orbeccen,pl_masse,pl_rade,st_mass,st_rad,st_logg,st_dens,st_age,st_vsini&where=pl_hostname%20like%20%27KOI-351%27&format=json",
-                )//GetTargetSystemData("'KOI-351'")
-            setTemp(result.data)
+            var response = await GetListOfSystems()
+            setSystemList(response)
         }
-
         getData()
     }, [])
+
+
+    //
+    // Checks if the selected system exists in the list of systems.
+    //
+    useEffect(() => {
+        if (enterSystem !== ""){
+            for (var i = 0; i < systemList.length; i++){
+                if (systemList[i].pl_hostname === enterSystem){
+                    setSystemExists(true)
+                    break;
+                }
+                else {
+                    setSystemExists(false)
+                }
+            }
+        }
+    }, [enterSystem, systemList])
+
+
+    //
+    // Queries the api for an existing system's data.
+    //
+    useEffect(() => {
+        const getData = async () => {
+            if (systemExists){
+                var response = await GetTargetSystemData("'" + enterSystem+ "'")
+                setSystemData(response)
+            }
+        }
+        getData()
+    }, [enterSystem, systemExists])
+
+
+    //
+    //
+    //
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        viewSystem(targetSystem)
+    }
+
+
+    //
+    //
+    //
+    const viewSystem = (sysname) => {
+        setEnterSystem(sysname)
+    }
+
 
     return (
         <div>
             <h1>Exoplanet Visualizer</h1>
+            <h2>{targetSystem}</h2>
+            <label><input type="checkbox" onClick={e => setTextVisible(!toggleStarSearchText)}></input>View random system</label>
             <SystemForm 
                 className="systemForm"
-                handleVisitSystem={handleVisitSystem} 
                 enableText={toggleStarSearchText} 
                 handleOnChange={e => setTargetSystem(e.target.value)} 
-                handleToggleStarSearchText={e => setTextVisible(!toggleStarSearchText)}/>
+                handleSubmit={handleSubmit}
+                toggleSubmit={disableViewSystem}/>
                 <ul>
-            {temp.map(item => (
+            {systemData.map(item => (
                 <li key={item.pl_name}>
                 <h4>{item.pl_hostname}</h4>
                 </li>

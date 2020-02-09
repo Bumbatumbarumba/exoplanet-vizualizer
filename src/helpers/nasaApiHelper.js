@@ -1,4 +1,3 @@
-import { PickRandomSystem } from './systemGeneratorHelper'
 import axios from 'axios'
 
 
@@ -14,16 +13,8 @@ const FORMAT = "&format=json"
 // Gets a list of all confirmed system host names.
 //
 export const GetListOfSystems = async () => {
-    // await fetch(BASE_API + CONFIRMED_PLANETS_TABLE + "pl_hostname" + ORDER_BY + FORMAT)
-    // .then((response) => {return response.json()})
-    // .then(data => {
-    //     PickRandomSystem(data)
-    // })
-    var resp = await fetch(BASE_API + CONFIRMED_PLANETS_TABLE + "pl_hostname" + ORDER_BY + FORMAT)
-    var data = await resp.json()
-    console.log("test 1")
-    console.log(data)
-    return data
+    var response = await axios(BASE_API + CONFIRMED_PLANETS_TABLE + "pl_hostname" + ORDER_BY + FORMAT)
+    return response.data
 } 
 
 //
@@ -31,6 +22,5 @@ export const GetListOfSystems = async () => {
 //
 export const GetTargetSystemData = async (targetSystem) =>{
     const response = await axios(BASE_API + CONFIRMED_PLANETS_TABLE + SELECTORS + ORDER_BY + STAR_FILTER + targetSystem + FORMAT)
-    .catch(error => console.log("Error: invalid system name!"))
     return response.data
 }
