@@ -11,17 +11,7 @@ export const MainRouter = () => {
     const [systemData, setSystemData] = useState([]) // Populates with data on an existing system.
     const [systemList, setSystemList] = useState([]) // List of stars with planets around them.
     const [systemExists, setSystemExists] = useState(false) // Self-explanatory lol.
-    const [disableViewSystem, setDisableViewSystem] = useState(false)
-
-    //
-    // Toggles the "view system" button depending on the state of systemList.
-    //
-    useEffect(() =>{
-        setDisableViewSystem(systemList === [])
-
-        // NOTE TO SELF: FIGURE OUT WHY THIS ISN'T WORKING (gosh darn react)
-        
-    }, [systemList])
+    const [toggleViewSys, setToggleViewSys] = useState(true) // Toggles the view system button.
 
 
     //
@@ -34,6 +24,14 @@ export const MainRouter = () => {
         }
         getData()
     }, [])
+
+
+    //
+    // Disables the view system button while data loads.
+    //
+    useEffect(() => {
+        setToggleViewSys(systemList === [])
+    }, [systemList])
 
 
     //
@@ -69,34 +67,60 @@ export const MainRouter = () => {
 
 
     //
-    //
+    // Handler for when the user clicks the view system button.
     //
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        if(toggleStarSearchText){
+            var result = pickRandomSystem()
+            setTargetSystem(result)
+        }
+        setEnterSystem(targetSystem)
         viewSystem(targetSystem)
     }
 
 
     //
+    const pickRandomSystem = () => {
+        var randomNum = getRandomIntInclusive(0, systemList.length-1)
+        return systemList[randomNum].pl_hostname
+    }
+
+
+    // TEMP, PUT THIS ELSEWHERE
+    const getRandomIntInclusive = (min, max) => {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+    }
+
+
     //
+    // Does the stuff to make the cool stuff happen, you feel me dawg?
     //
     const viewSystem = (sysname) => {
         setEnterSystem(sysname)
     }
 
 
+    //
+    // Renders the components.
+    //
     return (
         <div>
             <h1>Exoplanet Visualizer</h1>
-            <h2>{targetSystem}</h2>
-            <label><input type="checkbox" onClick={e => setTextVisible(!toggleStarSearchText)}></input>View random system</label>
-            <SystemForm 
-                className="systemForm"
-                enableText={toggleStarSearchText} 
-                handleOnChange={e => setTargetSystem(e.target.value)} 
-                handleSubmit={handleSubmit}
-                toggleSubmit={disableViewSystem}/>
-                <ul>
+            <div className="">
+                <label><input type="checkbox" onClick={e => setTextVisible(!toggleStarSearchText)}></input>View random system</label>
+                <SystemForm 
+                    className="systemForm"
+                    enableText={toggleStarSearchText} 
+                    handleOnChange={e => setTargetSystem(e.target.value)} 
+                    handleSubmit={handleSubmit}
+                    toggleSubmit={toggleViewSys}
+                    systemList={systemList}/>
+            </div>
+                <ul className="DELETE THIS IT'S ONLY FOR TESTING">
             {systemData.map(item => (
                 <li key={item.pl_name}>
                 <h4>{item.pl_hostname}</h4>
