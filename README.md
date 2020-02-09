@@ -4,7 +4,7 @@ A visualizer for data on confirmed exoplanets. Receives data from NASA's exoplan
 
 In the project directory, you can run:
 
-### 'npm install'
+### 'yarn install'
 
 Installs all of the packages required to run the build properly.
 
