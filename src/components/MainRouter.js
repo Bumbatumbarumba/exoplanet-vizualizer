@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { SystemForm } from './SystemForm'
+import { ViewSystem } from './ViewSystem'
 import { GetListOfSystems, GetTargetSystemData } from '../helpers/nasaApiHelper'
+import { Route, BrowserRouter } from 'react-router-dom'
 
 
-export const MainRouter = () => {
+export const MainRouter = (props) => {
     // Hook definitions
     const [targetSystem, setTargetSystem] = useState("") // Updates as user types.
     const [enterSystem, setEnterSystem] = useState("") // Set when user clicks "view system".
@@ -70,14 +72,15 @@ export const MainRouter = () => {
     // Handler for when the user clicks the view system button.
     //
     const handleSubmit = (e) => {
-        e.preventDefault()
-
+        //e.preventDefault()
+        var result = targetSystem
+        
         if(toggleStarSearchText){
-            var result = pickRandomSystem()
+            result = pickRandomSystem()
             setTargetSystem(result)
         }
-        setEnterSystem(targetSystem)
-        viewSystem(targetSystem)
+        setEnterSystem(result)
+        viewSystem(result)
     }
 
 
@@ -109,24 +112,18 @@ export const MainRouter = () => {
     //
     return (
         <div>
-            <h1>Exoplanet Visualizer</h1>
-            <div className="">
-                <label><input type="checkbox" onClick={e => setTextVisible(!toggleStarSearchText)}></input>View random system</label>
+            <BrowserRouter>
+                <h1>Exoplanet Visualizer</h1>
                 <SystemForm 
                     className="systemForm"
                     enableText={toggleStarSearchText} 
                     handleOnChange={e => setTargetSystem(e.target.value)} 
+                    handleToggleSearch={() => setTextVisible(!toggleStarSearchText)}
                     handleSubmit={handleSubmit}
                     toggleSubmit={toggleViewSys}
                     systemList={systemList}/>
-            </div>
-                <ul className="DELETE THIS IT'S ONLY FOR TESTING">
-            {systemData.map(item => (
-                <li key={item.pl_name}>
-                <h4>{item.pl_hostname}</h4>
-                </li>
-            ))}
-            </ul>
+                <Route path="/viewsys" exact component={() => <ViewSystem systemInfo={systemData}></ViewSystem>}></Route>
+            </BrowserRouter>
         </div>
     )
 }

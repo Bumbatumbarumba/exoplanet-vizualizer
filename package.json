@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "eslint-plugin-react-hooks": "^2.3.0",
+    "react-router-dom": "^5.1.2",
     "react-select-search": "^0.10.2"
   }
 }
