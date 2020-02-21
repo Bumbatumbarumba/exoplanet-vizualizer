@@ -3,6 +3,8 @@ import { SystemForm } from './SystemForm'
 import { ViewSystem } from './ViewSystem'
 import { GetListOfSystems, GetTargetSystemData } from '../helpers/nasaApiHelper'
 import { Route, BrowserRouter } from 'react-router-dom'
+import {} from 'react-router'
+import '../css/main.css'
 
 
 export const MainRouter = (props) => {
@@ -12,9 +14,10 @@ export const MainRouter = (props) => {
     const [toggleStarSearchText, setTextVisible] = useState(false) // Togggles the search bar.
     const [systemData, setSystemData] = useState([]) // Populates with data on an existing system.
     const [systemList, setSystemList] = useState([]) // List of stars with planets around them.
-    const [systemExists, setSystemExists] = useState(false) // Self-explanatory lol.
+    const [systemExists, setSystemExists] = useState(false) // Stores whether a searched system exists.
     const [toggleViewSys, setToggleViewSys] = useState(true) // Toggles the view system button.
-
+    const [toggleSysForm, setToggleSysForm] = useState("systemForm-visible") // Toggles the system form.
+    const [isRandomOn, setIsRandomOn] = useState(false) // Stores if the view random system option is checked.
 
     //
     // Gets a list of systems. 
@@ -32,8 +35,8 @@ export const MainRouter = (props) => {
     // Disables the view system button while data loads.
     //
     useEffect(() => {
-        setToggleViewSys(systemList === [])
-    }, [systemList])
+        setToggleViewSys(systemList === [] && ((targetSystem !== "") || isRandomOn))
+    }, [systemList, targetSystem, isRandomOn])
 
 
     //
@@ -69,6 +72,24 @@ export const MainRouter = (props) => {
 
 
     //
+    // Handles the user checkmarking to view the random system.
+    //
+    const handleViewRandom = () => {
+        setTextVisible(!toggleStarSearchText)
+        setIsRandomOn(!isRandomOn)
+    }
+
+
+    //
+    // Handles the user returning to the main page to view the form.
+    //
+    const handleReturn = () => {
+        setToggleSysForm("systemForm-visible")
+        console.log(toggleSysForm)
+    }
+
+
+    //
     // Handler for when the user clicks the view system button.
     //
     const handleSubmit = (e) => {
@@ -81,6 +102,8 @@ export const MainRouter = (props) => {
         }
         setEnterSystem(result)
         viewSystem(result)
+        setToggleSysForm("systemForm-hidden")
+        console.log(toggleSysForm)
     }
 
 
@@ -114,15 +137,16 @@ export const MainRouter = (props) => {
         <div>
             <BrowserRouter>
                 <h1>Exoplanet Visualizer</h1>
-                <SystemForm 
-                    className="systemForm"
-                    enableText={toggleStarSearchText} 
-                    handleOnChange={e => setTargetSystem(e.target.value)} 
-                    handleToggleSearch={() => setTextVisible(!toggleStarSearchText)}
-                    handleSubmit={handleSubmit}
-                    toggleSubmit={toggleViewSys}
-                    systemList={systemList}/>
-                <Route path="/viewsys" exact component={() => <ViewSystem systemInfo={systemData}></ViewSystem>}></Route>
+                <div className={toggleSysForm}>
+                    <SystemForm 
+                        enableText={toggleStarSearchText} 
+                        handleOnChange={e => setTargetSystem(e.target.value)} 
+                        handleToggleSearch={handleViewRandom}
+                        handleSubmit={handleSubmit}
+                        toggleSubmit={toggleViewSys}
+                        systemList={systemList}/>
+                </div>
+                <Route path="/viewsys" exact component={() => <ViewSystem systemInfo={systemData} handleReturn={handleReturn}></ViewSystem>}></Route>
             </BrowserRouter>
         </div>
     )
