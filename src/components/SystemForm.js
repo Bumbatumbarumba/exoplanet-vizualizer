@@ -33,10 +33,12 @@ export const SystemForm = (props) => {
 
     return (
         <div>
-            <label><input type="checkbox" onClick={props.handleToggleSearch}></input>View random system</label>
-            <input type="text" disabled={props.enableText} onChange={props.handleOnChange} onFocus={handleOnFocus} onBlur={handleOnBlur} defaultValue={defaultText}></input>
-            {/* <SelectSearch options={options} placeholder="test"></SelectSearch> */}
-            <NavLink to="/viewsys"><button disabled={props.toggleSubmit} onClick={props.handleSubmit}>View System</button></NavLink>
+            <form>
+                <label><input type="checkbox" onClick={props.handleToggleSearch}></input>View random system</label>
+                <input type="text" disabled={props.enableText} onChange={props.handleOnChange} onFocus={handleOnFocus} onBlur={handleOnBlur} defaultValue={defaultText}></input>
+                {/* <SelectSearch options={options} placeholder="test"></SelectSearch> */}
+                <NavLink to="/viewsys"><button disabled={props.toggleSubmit} onClick={props.handleSubmit}>View System</button></NavLink>
+            </form>
         </div>
     )
 }

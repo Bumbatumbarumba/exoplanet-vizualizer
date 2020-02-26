@@ -103,7 +103,6 @@ export const MainRouter = (props) => {
         setEnterSystem(result)
         viewSystem(result)
         setToggleSysForm("systemForm-hidden")
-        console.log(toggleSysForm)
     }
 
 
